@@ -1,13 +1,22 @@
 import express from 'express';
 import { connectDB } from './config/db.js';
 import dotenv from "dotenv";
-
-dotenv.config();
+import userRoutes from './routes/user.routes.js';
 
 const app = express();
+dotenv.config();
+
+app.use(express.json());
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+app.use("/api/users", userRoutes);
+
 
 const PORT = process.env.PORT || 8000;
-console.log(`Environment Port: ${PORT}`);
 
 const startServer = async () => {
   await connectDB();               

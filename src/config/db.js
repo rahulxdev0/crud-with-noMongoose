@@ -11,7 +11,9 @@ export const connectDB = async () => {
   try {
     await client.connect();
     db = client.db(DB_NAME);
+
     await db.collection("users").createIndex({ email: 1 }, { unique: true });
+    
     console.log("Connected to MongoDB");
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);

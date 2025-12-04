@@ -11,10 +11,18 @@ export const connectDB = async () => {
   try {
     await client.connect();
     db = client.db(DB_NAME);
-
-    await db.collection("users").createIndex({ email: 1 }, { unique: true });
     
     console.log("Connected to MongoDB");
+
+    // create collections / apply schema validators after connect
+    try {
+      const schemaModule = await import("../schema/userSchema.js");
+      if (schemaModule && typeof schemaModule.createUserSchema === "function") {
+        await schemaModule.createUserSchema();
+      }
+    } catch (err) {
+      console.warn("Failed to create user schema:", err.message || err);
+    }
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);
     throw error;
